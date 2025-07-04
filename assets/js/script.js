@@ -61,7 +61,10 @@ const selectItems = document.querySelectorAll("[data-select-item]");
 const selectValue = document.querySelector("[data-selecct-value]");
 const filterBtn = document.querySelectorAll("[data-filter-btn]");
 
-select.addEventListener("click", function () { elementToggleFunc(this); });
+// Only add select functionality if select element exists
+if (select) {
+  select.addEventListener("click", function () { elementToggleFunc(this); });
+}
 
 // add event in all select items
 for (let i = 0; i < selectItems.length; i++) {
@@ -102,10 +105,14 @@ for (let i = 0; i < filterBtn.length; i++) {
   filterBtn[i].addEventListener("click", function () {
 
     let selectedValue = this.innerText.toLowerCase();
-    selectValue.innerText = this.innerText;
+    if (selectValue) {
+      selectValue.innerText = this.innerText;
+    }
     filterFunc(selectedValue);
 
-    lastClickedBtn.classList.remove("active");
+    if (lastClickedBtn) {
+      lastClickedBtn.classList.remove("active");
+    }
     this.classList.add("active");
     lastClickedBtn = this;
 
@@ -143,17 +150,71 @@ const pages = document.querySelectorAll("[data-page]");
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
+    
+    // Store reference to the clicked navigation link
+    const clickedNavLink = this;
+    const targetPageName = this.innerHTML.toLowerCase();
 
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
-      } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
+    console.log('Clicked navigation:', targetPageName); // Debug log
+
+    // Remove active class from all pages and navigation links
+    for (let j = 0; j < pages.length; j++) {
+      pages[j].classList.remove("active");
+      console.log('Removing active from page:', pages[j].dataset.page); // Debug log
+    }
+    
+    for (let j = 0; j < navigationLinks.length; j++) {
+      navigationLinks[j].classList.remove("active");
+    }
+
+    // Find and activate the matching page
+    let pageFound = false;
+    for (let j = 0; j < pages.length; j++) {
+      // Handle different possible naming conventions
+      const pageName = pages[j].dataset.page;
+      if (targetPageName === pageName || 
+          targetPageName === pageName.toLowerCase() ||
+          (targetPageName === "cv" && pageName.toLowerCase() === "cv") ||
+          (targetPageName === "resume" && pageName.toLowerCase() === "cv") ||
+          (targetPageName === "cv" && pageName.toLowerCase() === "resume")) {
+        pages[j].classList.add("active");
+        console.log('Activated page:', pageName); // Debug log
+        pageFound = true;
+        break;
       }
     }
+    
+    if (!pageFound) {
+      console.warn('No matching page found for:', targetPageName);
+      console.log('Available pages:', Array.from(pages).map(p => p.dataset.page));
+    }
+    
+    // Activate the clicked navigation link
+    clickedNavLink.classList.add("active");
+    window.scrollTo(0, 0);
 
   });
 }
+
+// Initialize the page - show the first page by default
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the first navigation link that's marked as active, or default to the first one
+  let activeNavLink = document.querySelector("[data-nav-link].active");
+  if (!activeNavLink && navigationLinks.length > 0) {
+    activeNavLink = navigationLinks[0];
+    activeNavLink.classList.add("active");
+  }
+  
+  if (activeNavLink) {
+    const targetPageName = activeNavLink.innerHTML.toLowerCase();
+    
+    // Activate the corresponding page
+    for (let i = 0; i < pages.length; i++) {
+      const pageName = pages[i].dataset.page;
+      if (targetPageName === pageName || targetPageName === pageName.toLowerCase()) {
+        pages[i].classList.add("active");
+        break;
+      }
+    }
+  }
+});

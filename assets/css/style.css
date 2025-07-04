@@ -559,12 +559,13 @@ main {
   top: 0;
   left: 0;
   transform: translate(15px, -25px);
-  background: var(--bg-gradient-onyx);
+  background: var();
   border-radius: 14px;
   box-shadow: var(--shadow-1);
   width: 60px;
   height: 60px;
   overflow: hidden;
+  border: 1px solid var(--jet);
 }
 
 .testimonials-avatar-box img {
