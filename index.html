@@ -18,6 +18,11 @@
   <link rel="stylesheet" href="./assets/css/style.css">
 
   <!--
+    - vis-network for co-author graph
+  -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+  <!--
     - google font link
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -654,6 +659,47 @@
         </header>
 
         <!--
+          - Co-author Network
+        -->
+
+        <section class="coauthor-network">
+          <h3 class="h3" style="margin-bottom: 20px;">Co-author Network</h3>
+          <div id="coauthor-graph" style="width: 100%; height: 500px; border: 1px solid var(--border-gradient-onyx, #383838); border-radius: 14px; background: var(--bg-gradient-onyx, #2b2b2b);"></div>
+        </section>
+
+        <!--
+          - Journal Articles
+        -->
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="library-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Journal Articles</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Predictive remapping and allocentric coding as consequences of energy efficiency in recurrent neural network models of active vision</h4>
+
+              <span>2026</span>
+
+              <p class="timeline-text">
+                <strong>Nortmann, T., Sulewski, P., & Kietzmann, T. C.</strong><br>
+                <em>Patterns, 7(1)</em>. <a href="https://doi.org/10.1016/j.patter.2025.101422" target="_blank">https://doi.org/10.1016/j.patter.2025.101422</a>
+              </p>
+
+            </li>
+
+          </ol>
+
+        </section>
+
+        <!--
           - Preprints
         -->
 
@@ -677,19 +723,6 @@
               <p class="timeline-text">
                 <strong>Sulewski, P., Amme, C., Hebart, M. N., König, P., & Kietzmann, T. C.</strong><br>
                 <em>ResearchSquare</em>. <a href="https://doi.org/10.21203/rs.3.rs-7029247/v1" target="_blank">https://doi.org/10.21203/rs.3.rs-7029247/v1</a>
-              </p>
-
-            </li>
-
-            <li class="timeline-item">
-
-              <h4 class="h4 timeline-item-title">Predictive remapping and allocentric coding as consequences of energy efficiency in recurrent neural network models of active vision</h4>
-
-              <span>2025</span>
-
-              <p class="timeline-text">
-                <strong>Nortmann, T., Sulewski, P., & Kietzmann, T. C.</strong><br>
-                <em>bioRxiv</em>. <a href="https://doi.org/10.1101/2025.05.22.655555" target="_blank">https://doi.org/10.1101/2025.05.22.655555</a>
               </p>
 
             </li>
@@ -1072,6 +1105,31 @@
 <section class="timeline">
 <div class="title-wrapper">
 <div class="icon-box">
+<ion-icon name="hand-right-outline"></ion-icon>
+</div>
+<h3 class="h3">Academic Service</h3>
+</div>
+<ol class="timeline-list">
+<li class="timeline-item">
+<h4 class="h4 timeline-item-title">NEAT Symposium Co-Organizer</h4>
+<span>2023, 2024</span>
+<p class="timeline-text">
+ Co-organized the NEAT (Neuroscience, Embodiment, and Active Vision Talks) symposium at the University of Osnabrück. Responsibilities included developing the scientific program, moderating multiple sessions, and organizing social events to facilitate networking among researchers in cognitive neuroscience and active vision.
+</p>
+</li>
+<li class="timeline-item">
+<h4 class="h4 timeline-item-title">Peer Reviewer</h4>
+<span>2021 — present</span>
+<p class="timeline-text">
+ Reviewing manuscripts for Scientific Reports and Cognition, providing expert evaluation of research in cognitive neuroscience, visual perception, and computational modeling.
+</p>
+</li>
+</ol>
+</section>
+
+<section class="timeline">
+<div class="title-wrapper">
+<div class="icon-box">
 <ion-icon name="people-outline"></ion-icon>
 </div>
 <h3 class="h3">Student Supervision</h3>
@@ -1438,6 +1496,199 @@
     - custom js link
   -->
   <script src="./assets/js/script.js"></script>
+
+  <!--
+    - co-author network graph
+  -->
+  <script>
+    // Initialize co-author network graph
+    function initCoauthorNetwork() {
+      const container = document.getElementById('coauthor-graph');
+
+      // Co-author data (surname: [full name, papers with me])
+      const coauthors = {
+        'Kietzmann': ['T. C. Kietzmann', 10],
+        'König': ['P. König', 9],
+        'Amme': ['C. Amme', 7],
+        'Hebart': ['M. N. Hebart', 4],
+        'Spaak': ['E. Spaak', 3],
+        'Kriegeskorte': ['N. Kriegeskorte', 2],
+        'Nortmann': ['T. Nortmann', 2],
+        'Kouider': ['S. Kouider', 1],
+        'Rebouillat': ['B. Rebouillat', 1],
+        'Peelen': ['M. V. Peelen', 1],
+        'Bai': ['S. Bai', 1],
+        'Braatz': ['M. Braatz', 1]
+      };
+
+      // Co-author collaboration edges (who appears together on papers)
+      const coauthorCollabs = [
+        ['Kietzmann', 'König', 7],
+        ['Kietzmann', 'Amme', 6],
+        ['Kietzmann', 'Hebart', 4],
+        ['Kietzmann', 'Spaak', 3],
+        ['Kietzmann', 'Kriegeskorte', 2],
+        ['Kietzmann', 'Nortmann', 2],
+        ['Kietzmann', 'Peelen', 1],
+        ['Kietzmann', 'Bai', 1],
+        ['Kietzmann', 'Braatz', 1],
+        ['König', 'Amme', 6],
+        ['König', 'Hebart', 4],
+        ['König', 'Spaak', 3],
+        ['König', 'Kriegeskorte', 2],
+        ['König', 'Peelen', 1],
+        ['König', 'Bai', 1],
+        ['König', 'Braatz', 1],
+        ['Amme', 'Hebart', 4],
+        ['Amme', 'Spaak', 3],
+        ['Amme', 'Braatz', 1],
+        ['Amme', 'Peelen', 1],
+        ['Amme', 'Bai', 1],
+        ['Hebart', 'Spaak', 2],
+        ['Spaak', 'Peelen', 1],
+        ['Spaak', 'Bai', 1],
+        ['Peelen', 'Bai', 1],
+        ['Rebouillat', 'Kouider', 1]
+      ];
+
+      // Create nodes with surname mapping
+      const nodes = new vis.DataSet([
+        {
+          id: 'Sulewski',
+          label: 'Sulewski',
+          shape: 'dot',
+          size: 35,
+          color: {
+            background: '#ff7b00',
+            border: '#ff5500',
+            highlight: {
+              background: '#ff9933',
+              border: '#ff7700'
+            }
+          },
+          font: {
+            size: 16,
+            color: '#ffffff',
+            bold: true,
+            strokeWidth: 0
+          },
+          title: 'P. Sulewski'
+        }
+      ]);
+
+      const edges = new vis.DataSet([]);
+
+      // Add co-author nodes
+      for (const [surname, [fullName, papers]] of Object.entries(coauthors)) {
+        nodes.add({
+          id: surname,
+          label: surname,
+          shape: 'dot',
+          size: 10 + papers * 2.5,
+          color: {
+            background: '#4a9eff',
+            border: '#3377cc',
+            highlight: {
+              background: '#6bb3ff',
+              border: '#4a9eff'
+            }
+          },
+          font: {
+            size: 13,
+            color: '#ffffff',
+            strokeWidth: 0
+          },
+          title: `${fullName}: ${papers} publication${papers > 1 ? 's' : ''} with Sulewski`
+        });
+
+        // Edge from me to co-author
+        edges.add({
+          from: 'Sulewski',
+          to: surname,
+          value: papers,
+          color: { color: '#666666', highlight: '#999999' },
+          smooth: { type: 'curvedCW', roundness: 0.15 }
+        });
+      }
+
+      // Add edges between co-authors
+      for (const [author1, author2, papers] of coauthorCollabs) {
+        edges.add({
+          from: author1,
+          to: author2,
+          value: papers * 0.5,
+          color: { color: '#333333', opacity: 0.3, highlight: '#666666' },
+          smooth: { type: 'curvedCW', roundness: 0.2 },
+          dashes: true,
+          title: `${papers} shared publication${papers > 1 ? 's' : ''}`
+        });
+      }
+
+      // Network options
+      const options = {
+        nodes: {
+          borderWidth: 2,
+          borderWidthSelected: 3,
+          font: {
+            size: 14,
+            color: '#ffffff',
+            face: 'Poppins'
+          }
+        },
+        edges: {
+          width: 1,
+          scaling: {
+            min: 1,
+            max: 5
+          },
+          smooth: {
+            enabled: true,
+            type: 'continuous'
+          }
+        },
+        physics: {
+          stabilization: {
+            enabled: true,
+            iterations: 200
+          },
+          barnesHut: {
+            gravitationalConstant: -8000,
+            centralGravity: 0.3,
+            springLength: 120,
+            springConstant: 0.04,
+            damping: 0.09
+          }
+        },
+        interaction: {
+          hover: true,
+          tooltipDelay: 100,
+          hideEdgesOnDrag: true,
+          zoomView: true,
+          dragView: true
+        }
+      };
+
+      // Create network
+      const network = new vis.Network(container, { nodes, edges }, options);
+
+      // Center and fit the network after stabilization
+      network.once('stabilizationIterationsDone', function() {
+        network.fit({
+          animation: {
+            duration: 1000,
+            easingFunction: 'easeInOutQuad'
+          }
+        });
+      });
+    }
+
+    // Initialize when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCoauthorNetwork);
+    } else {
+      initCoauthorNetwork();
+    }
+  </script>
 
   <!--
     - ionicon link
