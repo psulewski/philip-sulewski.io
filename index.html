@@ -1505,6 +1505,28 @@
     function initCoauthorNetwork() {
       const container = document.getElementById('coauthor-graph');
 
+      // HSV to RGB conversion
+      function hsvToRgb(h, s, v) {
+        let r, g, b;
+        const i = Math.floor(h * 6);
+        const f = h * 6 - i;
+        const p = v * (1 - s);
+        const q = v * (1 - f * s);
+        const t = v * (1 - (1 - f) * s);
+        switch (i % 6) {
+          case 0: r = v, g = t, b = p; break;
+          case 1: r = q, g = v, b = p; break;
+          case 2: r = p, g = v, b = t; break;
+          case 3: r = p, g = q, b = v; break;
+          case 4: r = t, g = p, b = v; break;
+          case 5: r = v, g = p, b = q; break;
+        }
+        return '#' + [r, g, b].map(x => {
+          const hex = Math.round(x * 255).toString(16);
+          return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+      }
+
       // Co-author data (surname: [full name, papers with me])
       const coauthors = {
         'Kietzmann': ['T. C. Kietzmann', 10],
@@ -1559,16 +1581,16 @@
           shape: 'dot',
           size: 35,
           color: {
-            background: '#ff7b00',
-            border: '#ff5500',
+            background: '#6495ED',
+            border: '#4169E1',
             highlight: {
-              background: '#ff9933',
-              border: '#ff7700'
+              background: '#7AA8FF',
+              border: '#6495ED'
             }
           },
           font: {
             size: 16,
-            color: '#ffffff',
+            color: '#4a4a4a',
             bold: true,
             strokeWidth: 0
           },
@@ -1578,24 +1600,35 @@
 
       const edges = new vis.DataSet([]);
 
-      // Add co-author nodes
-      for (const [surname, [fullName, papers]] of Object.entries(coauthors)) {
+      // Add co-author nodes with HSV coloring
+      const coauthorKeys = Object.keys(coauthors);
+      const numCoauthors = coauthorKeys.length;
+
+      coauthorKeys.forEach((surname, index) => {
+        const [fullName, papers] = coauthors[surname];
+        const hue = index / numCoauthors; // Distribute hue across spectrum
+        const saturation = 0.7;
+        const value = 0.9;
+        const bgColor = hsvToRgb(hue, saturation, value);
+        const borderColor = hsvToRgb(hue, saturation, value * 0.8);
+        const highlightColor = hsvToRgb(hue, saturation * 0.8, value);
+
         nodes.add({
           id: surname,
           label: surname,
           shape: 'dot',
           size: 10 + papers * 2.5,
           color: {
-            background: '#4a9eff',
-            border: '#3377cc',
+            background: bgColor,
+            border: borderColor,
             highlight: {
-              background: '#6bb3ff',
-              border: '#4a9eff'
+              background: highlightColor,
+              border: bgColor
             }
           },
           font: {
             size: 13,
-            color: '#ffffff',
+            color: '#4a4a4a',
             strokeWidth: 0
           },
           title: `${fullName}: ${papers} publication${papers > 1 ? 's' : ''} with Sulewski`
@@ -1607,18 +1640,18 @@
           to: surname,
           value: papers,
           color: { color: '#666666', highlight: '#999999' },
-          smooth: { type: 'curvedCW', roundness: 0.15 }
+          smooth: false
         });
-      }
+      });
 
-      // Add edges between co-authors
+      // Add edges between co-authors (scaled by occurrence frequency)
       for (const [author1, author2, papers] of coauthorCollabs) {
         edges.add({
           from: author1,
           to: author2,
-          value: papers * 0.5,
+          width: 0.5 + papers * 0.5,  // Scale width by number of shared papers
           color: { color: '#333333', opacity: 0.3, highlight: '#666666' },
-          smooth: { type: 'curvedCW', roundness: 0.2 },
+          smooth: false,
           dashes: true,
           title: `${papers} shared publication${papers > 1 ? 's' : ''}`
         });
@@ -1631,7 +1664,7 @@
           borderWidthSelected: 3,
           font: {
             size: 14,
-            color: '#ffffff',
+            color: '#4a4a4a',
             face: 'Poppins'
           }
         },
@@ -1641,10 +1674,7 @@
             min: 1,
             max: 5
           },
-          smooth: {
-            enabled: true,
-            type: 'continuous'
-          }
+          smooth: false
         },
         physics: {
           stabilization: {
