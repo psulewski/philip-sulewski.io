@@ -2171,3 +2171,5 @@ textarea.form-input::-webkit-resizer { display: none; }
   .avs-feature-link { margin-top: 12px; }
 
 }
+
+.timeline-text + .timeline-text { margin-top: 10px; }
