@@ -179,6 +179,10 @@
           <li class="navbar-item">
             <button class="navbar-link active" data-nav-link>About</button>
           </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resources</button>
+          </li>
 <!-- 
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Projects</button>
@@ -221,6 +225,13 @@
 
           <p>
             Currently investigating neural mechanisms of visual attention using MEG, eye-tracking, and computational (ANN) modeling. In my work I challenge traditional assumptions about visual processing, for example that saccade events, not fixation onset, best explains the timing of early cortical responses during naturalistic vision. We also propose that memory processing rather than visual recognition demand <a href="https://doi.org/10.1038/s41593-026-02285-1" target="_blank" style="display: inline; white-space: normal;">explains longer fixations</a> in naturalistic scene viewing.
+          </p>
+
+          <p>
+            The data behind much of this work is openly available: the
+            <a href="#resources" style="display: inline; white-space: normal;">Active Visual Semantics dataset</a>
+            &mdash; MEG, eye-tracking and MRI from five participants visually exploring 4,080 natural scenes &mdash;
+            is public under CC BY 4.0.
           </p>
         </section>
 
@@ -663,6 +674,266 @@
             </li>
 
           </ul>
+
+        </section>
+
+      </article>
+
+      <!--
+        - #RESOURCES
+      -->
+
+      <article class="resources" data-page="resources">
+
+        <header>
+          <h2 class="h2 article-title">Resources</h2>
+        </header>
+
+        <!--
+          - AVS dataset
+        -->
+
+        <section class="dataset">
+
+          <div class="dataset-card">
+
+            <h3 class="h3 dataset-title">Active Visual Semantics (AVS)</h3>
+
+            <p class="dataset-tagline">
+              A large-scale MEG and eye-tracking dataset of <em>active</em> scene exploration: five participants
+              visually exploring 4,080 natural scenes across ten sessions each, with concurrent MEG, eye-tracking and
+              structural MRI. Unlike passive-viewing datasets with enforced central fixation, AVS captures brain
+              activity during self-directed looking &mdash; natural saccades and fixations included. Publicly
+              available today, with no account, registration or request needed.
+            </p>
+
+            <ul class="dataset-stats">
+
+              <li>
+                <strong>5</strong>
+                <span>participants</span>
+              </li>
+
+              <li>
+                <strong>4,080</strong>
+                <span>natural scenes</span>
+              </li>
+
+              <li>
+                <strong>10</strong>
+                <span>sessions each</span>
+              </li>
+
+              <li>
+                <strong>200k+</strong>
+                <span>fixation epochs</span>
+              </li>
+
+            </ul>
+
+            <div class="code-block" data-copy-block>
+
+              <div class="code-block-head">
+                <span class="code-block-label">Load it in three lines</span>
+                <button class="code-copy-btn" data-copy-btn type="button" aria-label="Copy code to clipboard">
+                  <ion-icon name="copy-outline"></ion-icon>
+                  <span data-copy-label>Copy</span>
+                </button>
+              </div>
+
+              <pre class="code-block-body"><code data-copy-source>import pyavs
+
+avs = pyavs.open_remote()
+raw = avs.load_meg_raw(subject_id=1, session=1, run=1, preload=True)</code></pre>
+
+            </div>
+
+            <p class="code-note">
+              <code>open_remote()</code> streams each file straight from the public bucket the first time it is
+              needed and caches it locally, so reruns skip the network entirely &mdash; no AWS account, no
+              credentials, no manual staging. Prefer the raw files? Browse them with
+              <code>aws s3 ls --no-sign-request s3://kietzmannlab-avs/</code>.
+            </p>
+
+            <ul class="dataset-links">
+
+              <li>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/" target="_blank" rel="noopener" class="dataset-btn primary">
+                  <ion-icon name="book-outline"></ion-icon>
+                  <span>Documentation</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/quickstart.html" target="_blank" rel="noopener" class="dataset-btn">
+                  <ion-icon name="rocket-outline"></ion-icon>
+                  <span>Quick start</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/data_access.html" target="_blank" rel="noopener" class="dataset-btn">
+                  <ion-icon name="cloud-download-outline"></ion-icon>
+                  <span>Data access</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="https://github.com/KietzmannLab/pyavs" target="_blank" rel="noopener" class="dataset-btn">
+                  <ion-icon name="logo-github"></ion-icon>
+                  <span>pyAVS on GitHub</span>
+                </a>
+              </li>
+
+              <li>
+                <a href="https://colab.research.google.com/github/KietzmannLab/pyavs/blob/main/examples/pyavs_colab_quickstart.ipynb" target="_blank" rel="noopener" class="dataset-btn">
+                  <ion-icon name="play-circle-outline"></ion-icon>
+                  <span>Run in Colab</span>
+                </a>
+              </li>
+
+            </ul>
+
+            <ul class="dataset-meta">
+
+              <li>
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>
+              </li>
+
+              <li>~663 GiB &middot; 18,415 objects &middot; us-west-2</li>
+
+              <li>
+                <ion-icon name="cloud-outline"></ion-icon>
+                Hosted through the
+                <a href="https://registry.opendata.aws/avs" target="_blank" rel="noopener">AWS Open Data Sponsorship Program</a>
+              </li>
+
+            </ul>
+
+          </div>
+
+        </section>
+
+        <!--
+          - what's inside
+        -->
+
+        <section class="dataset-contents">
+
+          <h3 class="h3 dataset-section-title">What&rsquo;s inside</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+
+              <div class="avs-feature-icon">
+                <ion-icon name="pulse-outline"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">MEG, epoched to eye movements</h4>
+                <p class="service-item-text">
+                  Fixation- and saccade-locked epochs alongside raw and Maxwell-filtered continuous recordings.
+                  Epochs for other events, such as scene onset, are straightforward to recompute.
+                </p>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/methods/meg_acquisition.html" target="_blank" rel="noopener" class="avs-feature-link">
+                  <span>MEG acquisition</span>
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="avs-feature-icon">
+                <ion-icon name="eye-outline"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Eye tracking, aligned to the MEG</h4>
+                <p class="service-item-text">
+                  Raw and preprocessed gaze samples, saccade and fixation events, and pupil dynamics, all
+                  co-registered to the MEG timeline.
+                </p>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/methods/eye_tracking.html" target="_blank" rel="noopener" class="avs-feature-link">
+                  <span>Eye tracking</span>
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="avs-feature-icon">
+                <ion-icon name="pricetags-outline"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Semantics at every fixation</h4>
+                <p class="service-item-text">
+                  Per-fixation object category labels, plus human ratings of whether the fixated object was
+                  mentioned in the participant&rsquo;s own scene caption &mdash; linking gaze to scene understanding.
+                </p>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/methods/object_labeling.html" target="_blank" rel="noopener" class="avs-feature-link">
+                  <span>Fixation object labeling</span>
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                </a>
+              </div>
+
+            </li>
+
+            <li class="service-item">
+
+              <div class="avs-feature-icon">
+                <ion-icon name="layers-outline"></ion-icon>
+              </div>
+
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Source-ready anatomy</h4>
+                <p class="service-item-text">
+                  Defaced structural MRI with FreeSurfer surfaces, BEM models and forward solutions &mdash; a
+                  drop-in MNE-Python <code>SUBJECTS_DIR</code>. Individualised head casts keep source
+                  reconstruction precise across sessions.
+                </p>
+                <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/methods/source_reconstruction.html" target="_blank" rel="noopener" class="avs-feature-link">
+                  <span>Source reconstruction</span>
+                  <ion-icon name="arrow-forward-outline"></ion-icon>
+                </a>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section>
+
+        <!--
+          - citation
+        -->
+
+        <section class="dataset-citation">
+
+          <h3 class="h3 dataset-section-title">Citing AVS</h3>
+
+          <div class="citation-card">
+
+            <p class="citation-text">
+              Sulewski, P., Amme, C., K&ouml;nig, P., Hebart, M. N., &amp; Kietzmann, T. C.
+              <em>Active Visual Semantics: A large-scale MEG and eye-tracking dataset for understanding visual
+              intelligence in action.</em> Manuscript in preparation.
+            </p>
+
+            <p class="citation-note">
+              DOI and venue will follow once the dataset paper is published &mdash; the
+              <a href="https://www.kietzmannlab.uni-osnabrueck.de/avs/reference/citation.html" target="_blank" rel="noopener">citation page in the documentation</a>
+              is the authoritative, up-to-date reference. If you need to cite data access itself:
+              &ldquo;Active Visual Semantics was accessed on [DATE] from
+              <a href="https://registry.opendata.aws/avs" target="_blank" rel="noopener">https://registry.opendata.aws/avs</a>.&rdquo;
+            </p>
+
+          </div>
 
         </section>
 
@@ -1288,7 +1559,6 @@
 </ol>
 </section>
 
-</article>
 
         <!-- <section class="skill">
 

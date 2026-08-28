@@ -141,80 +141,115 @@ for (let i = 0; i < formInputs.length; i++) {
   });
 }
 
-
-
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
+// alternate names that should resolve to an existing page
+const pageAliases = { resume: "cv" };
+
+const normalizePageName = function (name) {
+  const key = name.trim().toLowerCase();
+  return pageAliases[key] || key;
+}
+
+// show one page and mark its nav link active; returns false if no such page exists
+const activatePage = function (name) {
+
+  const targetPageName = normalizePageName(name);
+  let pageFound = false;
+
+  for (let i = 0; i < pages.length; i++) {
+    const isMatch = pages[i].dataset.page.toLowerCase() === targetPageName;
+    pages[i].classList.toggle("active", isMatch);
+    if (isMatch) pageFound = true;
+  }
+
+  if (!pageFound) return false;
+
+  for (let i = 0; i < navigationLinks.length; i++) {
+    const isMatch = normalizePageName(navigationLinks[i].innerHTML) === targetPageName;
+    navigationLinks[i].classList.toggle("active", isMatch);
+  }
+
+  return true;
+
+}
+
+const activatePageFromHash = function () {
+  const fromHash = window.location.hash.slice(1);
+  return fromHash ? activatePage(fromHash) : false;
+}
+
 // add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-    
-    // Store reference to the clicked navigation link
-    const clickedNavLink = this;
-    const targetPageName = this.innerHTML.toLowerCase();
 
-    console.log('Clicked navigation:', targetPageName); // Debug log
+    const targetPageName = normalizePageName(this.innerHTML);
 
-    // Remove active class from all pages and navigation links
-    for (let j = 0; j < pages.length; j++) {
-      pages[j].classList.remove("active");
-      console.log('Removing active from page:', pages[j].dataset.page); // Debug log
-    }
-    
-    for (let j = 0; j < navigationLinks.length; j++) {
-      navigationLinks[j].classList.remove("active");
+    if (!activatePage(targetPageName)) {
+      console.warn("No matching page found for:", targetPageName);
+      return;
     }
 
-    // Find and activate the matching page
-    let pageFound = false;
-    for (let j = 0; j < pages.length; j++) {
-      // Handle different possible naming conventions
-      const pageName = pages[j].dataset.page;
-      if (targetPageName === pageName || 
-          targetPageName === pageName.toLowerCase() ||
-          (targetPageName === "cv" && pageName.toLowerCase() === "cv") ||
-          (targetPageName === "resume" && pageName.toLowerCase() === "cv") ||
-          (targetPageName === "cv" && pageName.toLowerCase() === "resume")) {
-        pages[j].classList.add("active");
-        console.log('Activated page:', pageName); // Debug log
-        pageFound = true;
-        break;
-      }
+    // keep the URL in sync so every section is linkable, e.g. /#resources
+    if (normalizePageName(window.location.hash.slice(1)) !== targetPageName) {
+      window.history.pushState(null, "", "#" + targetPageName);
     }
-    
-    if (!pageFound) {
-      console.warn('No matching page found for:', targetPageName);
-      console.log('Available pages:', Array.from(pages).map(p => p.dataset.page));
-    }
-    
-    // Activate the clicked navigation link
-    clickedNavLink.classList.add("active");
+
     window.scrollTo(0, 0);
 
   });
 }
 
-// Initialize the page - show the first page by default
-document.addEventListener('DOMContentLoaded', function() {
-  // Find the first navigation link that's marked as active, or default to the first one
-  let activeNavLink = document.querySelector("[data-nav-link].active");
-  if (!activeNavLink && navigationLinks.length > 0) {
-    activeNavLink = navigationLinks[0];
-    activeNavLink.classList.add("active");
-  }
-  
-  if (activeNavLink) {
-    const targetPageName = activeNavLink.innerHTML.toLowerCase();
-    
-    // Activate the corresponding page
-    for (let i = 0; i < pages.length; i++) {
-      const pageName = pages[i].dataset.page;
-      if (targetPageName === pageName || targetPageName === pageName.toLowerCase()) {
-        pages[i].classList.add("active");
-        break;
-      }
-    }
-  }
+// in-page links and browser back/forward
+window.addEventListener("hashchange", function () {
+  if (activatePageFromHash()) window.scrollTo(0, 0);
 });
+
+// Initialize the page - honour the URL hash, otherwise show the first page
+const initPage = function () {
+
+  if (activatePageFromHash()) return;
+
+  const activeNavLink = document.querySelector("[data-nav-link].active") || navigationLinks[0];
+  if (activeNavLink) activatePage(activeNavLink.innerHTML);
+
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initPage);
+} else {
+  initPage();
+}
+
+
+
+// copy-to-clipboard buttons on code blocks
+const copyButtons = document.querySelectorAll("[data-copy-btn]");
+
+for (let i = 0; i < copyButtons.length; i++) {
+  copyButtons[i].addEventListener("click", function () {
+
+    const block = this.closest("[data-copy-block]");
+    const source = block && block.querySelector("[data-copy-source]");
+    const label = this.querySelector("[data-copy-label]");
+
+    if (!source || !navigator.clipboard) return;
+
+    const button = this;
+
+    navigator.clipboard.writeText(source.innerText.trim()).then(function () {
+
+      button.classList.add("copied");
+      if (label) label.innerText = "Copied";
+
+      setTimeout(function () {
+        button.classList.remove("copied");
+        if (label) label.innerText = "Copy";
+      }, 1600);
+
+    });
+
+  });
+}
