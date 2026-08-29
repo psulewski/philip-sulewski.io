@@ -2073,13 +2073,28 @@ raw = avs.load_meg_raw(subject_id=1, session=1, run=1, preload=True)</code></pre
 
       // Center and fit the network after stabilization
       network.once('stabilizationIterationsDone', function() {
-        network.fit({
-          animation: {
-            duration: 1000,
-            easingFunction: 'easeInOutQuad'
-          }
-        });
+        network.fit();
       });
+
+      // The Publications tab is hidden (display: none) on initial page load,
+      // so the container has zero size when the network first stabilizes and
+      // fits. Re-fit once the container actually becomes visible (e.g. when
+      // the user navigates to the Publications tab), otherwise the graph
+      // stays pinned to the top-left corner of its box.
+      let wasHidden = container.offsetWidth === 0;
+      const resizeObserver = new ResizeObserver(function() {
+        const isVisible = container.offsetWidth > 0;
+        if (isVisible && wasHidden) {
+          network.fit({
+            animation: {
+              duration: 500,
+              easingFunction: 'easeInOutQuad'
+            }
+          });
+        }
+        wasHidden = !isVisible;
+      });
+      resizeObserver.observe(container);
     }
 
     // Initialize when page loads
