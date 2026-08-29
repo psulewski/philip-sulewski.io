@@ -1951,11 +1951,11 @@ raw = avs.load_meg_raw(subject_id=1, session=1, run=1, preload=True)</code></pre
           shape: 'dot',
           size: 35,
           color: {
-            background: '#6495ED',
-            border: '#4169E1',
+            background: '#AFC9F0',
+            border: '#7FA0D6',
             highlight: {
-              background: '#7AA8FF',
-              border: '#6495ED'
+              background: '#C6DAF7',
+              border: '#AFC9F0'
             }
           },
           font: {
@@ -1970,18 +1970,18 @@ raw = avs.load_meg_raw(subject_id=1, session=1, run=1, preload=True)</code></pre
 
       const edges = new vis.DataSet([]);
 
-      // Add co-author nodes with HSV coloring
+      // Add co-author nodes with pastel HSV coloring
       const coauthorKeys = Object.keys(coauthors);
       const numCoauthors = coauthorKeys.length;
 
       coauthorKeys.forEach((surname, index) => {
         const [fullName, papers] = coauthors[surname];
         const hue = index / numCoauthors; // Distribute hue across spectrum
-        const saturation = 0.7;
-        const value = 0.9;
+        const saturation = 0.4;
+        const value = 0.95;
         const bgColor = hsvToRgb(hue, saturation, value);
-        const borderColor = hsvToRgb(hue, saturation, value * 0.8);
-        const highlightColor = hsvToRgb(hue, saturation * 0.8, value);
+        const borderColor = hsvToRgb(hue, saturation + 0.15, value * 0.85);
+        const highlightColor = hsvToRgb(hue, saturation * 0.7, value);
 
         nodes.add({
           id: surname,
