@@ -838,6 +838,36 @@ main {
   line-height: 1.6;
 }
 
+.pub-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pub-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--jet);
+  border-radius: 20px;
+  color: var(--light-gray-70);
+  font-size: var(--fs-8);
+  transition: var(--transition-1);
+}
+
+.pub-link ion-icon {
+  font-size: 14px;
+  color: var(--blue-accent);
+}
+
+.pub-link:hover {
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+}
+
 /**
  * skills 
  */
