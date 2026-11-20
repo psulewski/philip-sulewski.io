@@ -314,7 +314,7 @@ main {
   overflow: hidden;
 }
 
-.avatar-box img { display: block; }
+.avatar-box img { display: block; aspect-ratio: 1 / 1; object-fit: cover; }
 
 .info-content .name {
   color: var(--white-2);
